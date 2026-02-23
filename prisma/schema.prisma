@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model user {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  emailVerified Boolean        @default(false)
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  role          String         @default("user")
+  accounts      account[]
+  sessions      session[]
+  verifications verification[]
+
+  @@map("user")
+}
+
+model account {
+  id                String   @id @default(cuid())
+  userId            String
+  accountId         String
+  providerId        String
+  password          String? // for credential provider
+  type              String?  @default("oauth")
+  provider          String   @default("credential")
+  providerAccountId String?  @default("")
+  refreshToken      String?
+  accessToken       String?
+  expiresAt         Int?
+  tokenType         String?
+  scope             String?
+  idToken           String?
+  sessionState      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("account")
+}
+
+model session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model verification {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  type      String
+  expires   DateTime
+  createdAt DateTime @default(now())
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@map("verification")
+}
+
+model country {
+  id               Int     @id(map: "pk_countryid")
+  iso_3166_code    String? @db.VarChar(255)
+  reg_prefixes     String? @db.VarChar(255)
+  country_name     String? @db.VarChar(255)
+  from_to          String? @db.VarChar(50)
+  continent        String? @db.VarChar(255)
+  wikipedia_link   String? @db.VarChar(255)
+  flag_url         String? @db.VarChar(255)
+  old_reg_prefixes String? @db.VarChar(255)
+  faa_url          String? @db.VarChar(255)
+  register_url     String? @db.VarChar(255)
+  google_maps_url  String? @db.VarChar(255)
+
+  @@map("country")
+}
+
+model manufacturer {
+  id         Int     @id(map: "pk_manufacturerid")
+  name_short String  @db.VarChar(50)
+  name       String? @db.VarChar(100)
+  starting   Int?    @db.SmallInt
+  ending     Int?    @db.SmallInt
+  class      String? @db.VarChar(50)
+  status     String? @db.VarChar(50)
+  successor  Int?    @db.SmallInt
+  wiki       String?
+  website    String?
+  email      String? @db.VarChar(100)
+  address    String? @db.VarChar(100)
+  zip        String? @db.VarChar(50)
+  town       String? @db.VarChar(50)
+  tel        String? @db.VarChar(50)
+  logo       String? @db.VarChar(1)
+  notes      String?
+  fk_refid   String? @db.VarChar(200)
+
+  @@map("manufacturer")
+}
+
+model manufacturer_country {
+  manufacturerid Int
+  countryid      Int
+
+  @@id([manufacturerid, countryid], map: "pk_manufacturer_country")
+}
+
+model model {
+  id        Int     @id(map: "pk_model") @db.SmallInt
+  model     String
+  short     String? @db.VarChar(50)
+  fk_typeid Int?
+  fk_roleid Int?
+  year      Int?
+  class     String? @db.VarChar(50)
+  crew      String? @db.VarChar(100)
+  pax       String? @db.VarChar(100)
+  icao      String? @db.VarChar(50)
+  eng       String? @db.VarChar(50)
+  iata      String? @db.VarChar(100)
+  use       String? @db.VarChar(50)
+  nb        String? @db.VarChar(100)
+  nbc       String? @db.VarChar(100)
+  wiki      String? @db.VarChar(100)
+  notes     String?
+  fk_refid  String? @db.VarChar(100)
+  photo     String? @db.VarChar(100)
+
+  @@map("model")
+}
+
+model type {
+  id                Int     @id
+  name              String? @db.VarChar(80)
+  manufacturer      Int?
+  description       String? @db.VarChar(15)
+  engines           String? @db.VarChar(255)
+  to_manufacturer   Int?    @db.SmallInt
+  also_manufacturer Int?    @db.SmallInt
+  year              Int?    @db.SmallInt
+  wiki              String?
+  notes             String?
+  ref               String? @db.VarChar(255)
+  photo             String?
+
+  @@map("type")
+}
