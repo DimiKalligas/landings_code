@@ -6,7 +6,6 @@ const hostnames = [
         ]
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: hostnames.map(hostname => ({
         protocol: 'https',

@@ -1,3 +1,10 @@
+1o version που θα έχει Admin JS (δοκιμάσαμε πρώτα next-admin)
+
+# Docker
+`docker start landings_pg`
+τα data μας είναι persisted στο volume <landings_pgdata> ->
+το κάνουμε check με `docker volume inspect landings_pgdata` & από Docker Desktop -> Volumes -> landings_pgdata
+
 # migration σε Postgres, AdminJS
 SQL Server -> Script Data:
 Set Script DROP and CREATE to CREATE
@@ -39,11 +46,13 @@ shadcn block: <SimpleHero>
 images remotePatterns στο <next.config.ts> to securely allow the next/image component to optimize and serve images from external URLs. 
 
 # Auth
-Για SignUp: `directus.request(registerUser(email, password))`
+Για SignUp: 
 Για login: `response = await client.login({ email, password });` & 
 επιστρέφει <response.access_token> &  `cookie.set('directus_session_token', response.access_token`,..
 
 # To Do
+αν πάω να κάνω νέο SignUp -> Unique constraint failed on the field "providerAccountId ✅ 
+Να δω τα Login/SignUp πως παίζουν με το /admin & to proxy.ts
 να βάλω τους providers & resend..
 Docker Postgres: Add docker-compose.yml with persistent volume and credentials.✅ 
 Prisma schema: Introspect DB (prisma db pull) or write prisma/schema.prisma to match Postgres.✅ 
@@ -52,5 +61,6 @@ Data import: Load your existing Postgres dump into the Docker container.✅
 Replace Directus usage: Replace calls in directus.ts and components with Prisma queries.✅ 
 ****Auth (Better-Auth): Integrate Better-Auth, map/migrate users, ensure password-hash compatibility, add session/JWT flows.
 Admin panel (AdminJS): Stand up AdminJS (with Prisma adapter) as an Express microservice or Next.js API route; secure with Better-Auth. -> update the server actions and add an /api/auth/me route to use the Prisma-backed Better-Auth helpers (register, login, logout, session).✅
-Files/media: Move Directus file storage to S3 or dedicated volume and update file URLs.
+Files/media: Move file storage to S3 or dedicated volume and update file URLs.
 Ops: Add tests, CI, DB backups, monitoring, and connection pooling.
+Test Deployment!!!

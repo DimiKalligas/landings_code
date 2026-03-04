@@ -98,46 +98,46 @@ export function HeroHeader({ isLoggedIn }: HeroHeaderProps) {
                             </div>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                                 {isLoggedIn ? (
-  <Button 
-    onClick={() => {
-      startTransition(async () => {
-        await signOut({
-          fetchOptions: {
-            onSuccess: () => {
-              router.push("/login");
-            },
-          },
-        });
-      });
-    }}
-    disabled={isPending} 
-    className="w-full"
-  >
-    Logout
-  </Button>
-) : (
-  <div className="flex gap-3">
-    <Button
-      asChild
-      variant="outline"
-      size="sm"
-      className={cn(isScrolled && 'lg:hidden')}
-    >
-      <Link href="login">
-        <span>Login</span>
-      </Link>
-    </Button>
-    <Button
-      asChild
-      size="sm"
-      className={cn(isScrolled && 'lg:hidden')}
-    >
-      <Link href="signup">
-        <span>Sign Up</span>
-      </Link>
-    </Button>
-  </div>
-)}
+                                    <Button 
+                                        onClick={() => {
+                                        startTransition(async () => {
+                                            await signOut({
+                                            fetchOptions: {
+                                                onSuccess: () => {
+                                                router.push("/login");
+                                                },
+                                            },
+                                            });
+                                        });
+                                        }}
+                                        disabled={isPending} 
+                                        className="w-full"
+                                    >
+                                        Logout
+                                    </Button>
+                                    ) : (
+                                    <div className="flex gap-3">
+                                        <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className={cn(isScrolled && 'lg:hidden')}
+                                        >
+                                        <Link href="login">
+                                            <span>Login</span>
+                                        </Link>
+                                        </Button>
+                                        <Button
+                                        asChild
+                                        size="sm"
+                                        className={cn(isScrolled && 'lg:hidden')}
+                                        >
+                                        <Link href="signup">
+                                            <span>Sign Up</span>
+                                        </Link>
+                                        </Button>
+                                    </div>
+                                    )}
                                 <Button
                                     asChild
                                     size="sm"

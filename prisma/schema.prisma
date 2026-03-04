@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../lib/generated/prisma"
+  previewFeatures = ["partialIndexes"]
 }
 
 datasource db {
@@ -24,26 +25,23 @@ model user {
 }
 
 model account {
-  id                String   @id @default(cuid())
-  userId            String
-  accountId         String
-  providerId        String
-  password          String? // for credential provider
-  type              String?  @default("oauth")
-  provider          String   @default("credential")
-  providerAccountId String?  @default("")
-  refreshToken      String?
-  accessToken       String?
-  expiresAt         Int?
-  tokenType         String?
-  scope             String?
-  idToken           String?
-  sessionState      String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  type                  String?
+  provider              String?
+  password              String?
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
   @@index([userId])
   @@map("account")
 }
