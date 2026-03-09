@@ -12,10 +12,35 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U devjim"]
+      test: ["CMD-SHELL", "pg_isready -U devjim -d landingspg"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: landings_app
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    # environment:
+    # # Hardcode it here temporarily to test
+    # - DATABASE_URL=postgresql://devjim:devpwd@db:5432/landingspg?schema=public
+    # - BETTER_AUTH_URL=http://localhost:3000
+    # - BETTER_AUTH_SECRET=ffYU4rHpJZyIirC2SxeQSGSGTYENWdF9
+    volumes:
+      # Mount source code for hot reload — node_modules and .next stay in container
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+      # - /app/lib/generated
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   pgdata:

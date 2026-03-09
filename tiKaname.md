@@ -1,7 +1,11 @@
-1o version που θα έχει Admin JS (δοκιμάσαμε πρώτα next-admin)
+Όλα Docker
 
 # Docker
-`docker start landings_pg`
+`docker compose restart app`
+Για να τρέξουμε κάτι μέσα στο container, 
+α) βρίσκουμε το id με `docker ps`, ->
+`docker exec -it <container-name-or-id> sh` -> </app #> & μετά τρέχουμε π.χ. `npx prisma generate` ή
+β) `docker compose exec landings_app npx prisma generate`
 τα data μας είναι persisted στο volume <landings_pgdata> ->
 το κάνουμε check με `docker volume inspect landings_pgdata` & από Docker Desktop -> Volumes -> landings_pgdata
 
@@ -23,9 +27,8 @@ Set Script Foreign Keys to True
 `Remove-Item -Path .next -Recurse -Force`
 
 ## Postgres db 
-SQL Server: landings (SSMS: usr: directus, pwd: directus)
-postgres: landingspg: devJim devpwd (su: postgres katsika1)
-db credentials: <devjim> <devpwd>
+Στον PgAdmin4 -> docker-landings -> landingspg
+db credentials: <devjim> <devpwd> (su: postgres katsika1)
 `psql -U devjim -d landingspg -f "E:/dev/NextJS/landings7/landings-schema.sql"`
 `psql -U devjim -d landingspg -f "E:/dev/NextJS/landings7/landings-data.sql"`
 backup:

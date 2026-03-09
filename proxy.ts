@@ -1,18 +1,3 @@
-// import { auth } from "@/lib/auth"; // your better-auth server instance
-// import { headers } from "next/headers";
-// import { redirect } from "next/navigation";
-
-// export async function isAdmin() {
-//   const session = await auth.api.getSession({
-//     headers: await headers(),
-//   });
-
-//   // Only allow if logged in AND role is admin
-//   if (!session || session.user.role !== "admin") {
-//     return false;
-//   }
-//   return true;
-// }
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth'; // adjust path to your better-auth instance
 
@@ -39,5 +24,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/dashboard/:path*'],
 };
