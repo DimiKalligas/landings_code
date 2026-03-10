@@ -11,7 +11,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ExternalLink } from "lucide-react";
-import { getTypeById, getModelsByTypeId } from "@/app/actions/types";
+import { getTypeById, getModelsByTypeId } from "@/actions/types";
 import { Button } from "@/components/ui/button";
 import { ModelTableClient } from "./model-table-client";
 

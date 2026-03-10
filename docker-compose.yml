@@ -25,19 +25,16 @@ services:
     restart: unless-stopped
     env_file:
       - .env.docker
-    # environment:
-    # # Hardcode it here temporarily to test
-    # - DATABASE_URL=postgresql://devjim:devpwd@db:5432/landingspg?schema=public
-    # - BETTER_AUTH_URL=http://localhost:3000
-    # - BETTER_AUTH_SECRET=ffYU4rHpJZyIirC2SxeQSGSGTYENWdF9
     volumes:
       # Mount source code for hot reload — node_modules and .next stay in container
       - .:/app
       - /app/node_modules
       - /app/.next
-      # - /app/lib/generated
+      - /app/lib/generated
     ports:
+      # - "5433:5432"  # Docker Postgres on 5433, native stays on 5432
       - "3000:3000"
+      - "5555:5555"
     depends_on:
       db:
         condition: service_healthy

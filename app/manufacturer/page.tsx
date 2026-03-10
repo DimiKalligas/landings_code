@@ -1,27 +1,29 @@
-// server component that fetches data and passes it to data-table-client component
-import { DataTableClient } from './data-table-client';
-import { Organization } from './columns';
+/**
+ * app/manufacturer/page.tsx
+ *
+ * MIGRATION DIFF:
+ *   BEFORE: async getData() { fetch('/api/manufacturers') }
+ *   AFTER:  direct Server Action call — no API route, no HTTP overhead
+ */
 
-async function getData(): Promise<Organization[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/manufacturers`, {
-      cache: 'no-store',
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch manufacturers');
-    }
-    
-    const items = await response.json();
-    return items as Organization[];
-  } catch (error) {
-    console.error('Error:', error);
-    return [];
-  }
-}
+import { getManufacturers } from "@/app/actions/manufacturers";
+import { ManufacturerTableClient } from "./data-table-client";
 
-export default async function ManufacturerTable() {
-  const data = await getData();
-  return <DataTableClient data={data} />;
+export const metadata = { title: "Manufacturers" };
+
+export default async function ManufacturerPage() {
+  // ✅ Direct Prisma call — replaces your fetch('/api/manufacturers')
+  const data = await getManufacturers();
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Manufacturers</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          {data.length} manufacturers · click a row to view details
+        </p>
+      </div>
+      <ManufacturerTableClient data={data} />
+    </div>
+  );
 }

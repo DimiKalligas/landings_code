@@ -1,9 +1,18 @@
-"use client"
-"use no memo"
+"use client";
+"use no memo";
 
-import * as React from "react"
+/**
+ * app/manufacturer/data-table-client.tsx
+ *
+ * Replaces your existing data-table-client.tsx.
+ * Main changes:
+ *  - Imports type from actions (not a local columns.ts)
+ *  - Uses manufacturerColumns (typed to Manufacturer)
+ *  - Row click → /manufacturer/[id]  (unchanged behaviour)
+ */
+
+import * as React from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -13,8 +22,23 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-
+} from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -22,200 +46,125 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { columns, Organization } from "./columns"
+} from "@/components/ui/table";
+import { Manufacturer } from "@/app/actions/manufacturers";
+import { manufacturerColumns } from "./columns";
 
-interface DataTableClientProps {
-  data: Organization[]
+interface ManufacturerTableClientProps {
+  data: Manufacturer[];
 }
 
-export function DataTableClient({ data }: DataTableClientProps) {
-  const router = useRouter()
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10, // 👈 
-  })
-
+export function ManufacturerTableClient({ data }: ManufacturerTableClientProps) {
+  const router = useRouter();
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 20 });
 
   const table = useReactTable({
     data,
-    columns,
+    columns: manufacturerColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination,
-    },
-  })
+    state: { sorting, columnFilters, columnVisibility, pagination },
+  });
 
-  console.log({
-  pageIndex: table.getState().pagination.pageIndex,
-  pageSize: table.getState().pagination.pageSize,
-  pageCount: table.getPageCount(),
-})
-
-
-  // Get unique statuses and classes for filters
   const uniqueStatuses = React.useMemo(() => {
-    const statuses = new Set<string>()
-    data.forEach((row: any) => {
-      if (row.status) statuses.add(row.status)
-    })
-    return Array.from(statuses).sort()
-  }, [data])
+    const s = new Set<string>();
+    data.forEach((r) => { if (r.status) s.add(r.status); });
+    return Array.from(s).sort();
+  }, [data]);
 
   const uniqueClasses = React.useMemo(() => {
-    const classes = new Set<string>()
-    data.forEach((row: any) => {
-      if (row.class) classes.add(row.class)
-    })
-    return Array.from(classes).sort()
-  }, [data])
+    const c = new Set<string>();
+    data.forEach((r) => { if (r.class) c.add(r.class); });
+    return Array.from(c).sort();
+  }, [data]);
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4">
+      {/* ── Filters ── */}
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
         <Input
-          placeholder="Filter by name..."
+          placeholder="Filter by name…"
           value={(table.getColumn("name_short")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name_short")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
+          onChange={(e) => table.getColumn("name_short")?.setFilterValue(e.target.value)}
+          className="max-w-xs"
         />
-        
         {uniqueStatuses.length > 0 && (
           <Select
             value={(table.getColumn("status")?.getFilterValue() as string) ?? "all"}
-            onValueChange={(value) =>
-              table.getColumn("status")?.setFilterValue(value === "all" ? "" : value)
-            }
+            onValueChange={(v) => table.getColumn("status")?.setFilterValue(v === "all" ? "" : v)}
           >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              {uniqueStatuses.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
+              {uniqueStatuses.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
             </SelectContent>
           </Select>
         )}
-
         {uniqueClasses.length > 0 && (
           <Select
             value={(table.getColumn("class")?.getFilterValue() as string) ?? "all"}
-            onValueChange={(value) =>
-              table.getColumn("class")?.setFilterValue(value === "all" ? "" : value)
-            }
+            onValueChange={(v) => table.getColumn("class")?.setFilterValue(v === "all" ? "" : v)}
           >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by class" />
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Class" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Classes</SelectItem>
-              {uniqueClasses.map((classItem) => (
-                <SelectItem key={classItem} value={classItem}>
-                  {classItem}
-                </SelectItem>
-              ))}
+              {uniqueClasses.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
         )}
-        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
+            <Button variant="outline" className="ml-auto">Columns</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id.replace(/_/g, " ")}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+            {table.getAllColumns().filter((col) => col.getCanHide()).map((col) => (
+              <DropdownMenuCheckboxItem
+                key={col.id}
+                className="capitalize"
+                checked={col.getIsVisible()}
+                onCheckedChange={(v) => col.toggleVisibility(!!v)}
+              >
+                {col.id.replace(/_/g, " ")}
+              </DropdownMenuCheckboxItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
+      {/* ── Table ── */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id}>
+                {hg.headers.map((h) => (
+                  <TableHead key={h.id}>
+                    {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
-                    // console.log('Row clicked, ID:', row.original.id);
-                    router.push(`/manufacturer/${row.original.id}`);
-                  }}
-                  // onClick={() => router.push(`/manufacturer/${row.original.id}`)}
                   className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => router.push(`/manufacturer/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -226,7 +175,7 @@ export function DataTableClient({ data }: DataTableClientProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={manufacturerColumns.length} className="h-24 text-center text-muted-foreground">
                   No results.
                 </TableCell>
               </TableRow>
@@ -234,34 +183,24 @@ export function DataTableClient({ data }: DataTableClientProps) {
           </TableBody>
         </Table>
       </div>
-      
+
+      {/* ── Pagination ── */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          {table.getFilteredRowModel().rows.length} row(s) total
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+        <p className="text-sm text-muted-foreground">
+          {table.getFilteredRowModel().rows.length} row(s)
+        </p>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
             Previous
           </Button>
-          <div className="text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <span className="text-sm font-medium">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Next
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }

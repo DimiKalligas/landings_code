@@ -15,7 +15,7 @@ Set Script DROP and CREATE to CREATE
 Set Script Indexes to True
 Set Script Primary Keys to True
 Set Script Foreign Keys to True
-1. <Schema>: SQL Server -> Tasks -> Set Types of data to script to Schema
+1. <Get-ChildItem -Recurse -Include *.tsx,*.ts,*.js | Select-String "directus" | Select-Object -Unique PathSchema>: SQL Server -> Tasks -> Set Types of data to script to Schema
 σώσαμε στο <migration/landings-schema.sql>
 κάναμε migrate το schema <landings-schema.sql> στο <schema.prisma> & με `npx prisma db push` το πήρε η βάση <landingspg>
 2. <Data>: SQL Server -> Tasks -> Set Types of data to script to Data
@@ -49,11 +49,12 @@ shadcn block: <SimpleHero>
 images remotePatterns στο <next.config.ts> to securely allow the next/image component to optimize and serve images from external URLs. 
 
 # Auth
-Για SignUp: 
+Για SignUp: ***να αλλαχτούν με better-auth***
 Για login: `response = await client.login({ email, password });` & 
 επιστρέφει <response.access_token> &  `cookie.set('directus_session_token', response.access_token`,..
 
 # To Do
+Οταν επιλέγω manufacturer να μου δείχνει Type! `getTypeById(id)`
 αν πάω να κάνω νέο SignUp -> Unique constraint failed on the field "providerAccountId ✅ 
 Να δω τα Login/SignUp πως παίζουν με το /admin & to proxy.ts
 να βάλω τους providers & resend..
@@ -65,5 +66,6 @@ Replace Directus usage: Replace calls in directus.ts and components with Prisma 
 ****Auth (Better-Auth): Integrate Better-Auth, map/migrate users, ensure password-hash compatibility, add session/JWT flows.
 Admin panel (AdminJS): Stand up AdminJS (with Prisma adapter) as an Express microservice or Next.js API route; secure with Better-Auth. -> update the server actions and add an /api/auth/me route to use the Prisma-backed Better-Auth helpers (register, login, logout, session).✅
 Files/media: Move file storage to S3 or dedicated volume and update file URLs.
+Στο layout να αλλάξω το cookie.get σε better-auth!
 Ops: Add tests, CI, DB backups, monitoring, and connection pooling.
 Test Deployment!!!

@@ -26,8 +26,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const isLoggedIn = Boolean(
-    cookieStore.get('directus_session_token')?.value
+  const isLoggedIn = Boolean( // να το αλλάξω σε better-auth!
+    cookieStore.get('landings_session_token')?.value
   );
 
   return (

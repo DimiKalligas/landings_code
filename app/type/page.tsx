@@ -1,27 +1,25 @@
-// server component that fetches data and passes it to data-table-client component
-import { TypeTableClient } from './type-table-client';
-import { Type } from './columns';
+/**
+ * app/type/page.tsx
+ * Master table: aircraft types. Row click → /type/[id] showing linked models.
+ */
 
-async function getData(): Promise<Type[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/types`, {
-      cache: 'no-store',
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch types');
-    }
-    
-    const items = await response.json();
-    return items as Type[];
-  } catch (error) {
-    console.error('Error:', error);
-    return [];
-  }
-}
+import { getTypes } from "@/app/actions/types";
+import { TypeTableClient } from "./data-table-client";
 
-export default async function TypeTable() {
-  const data = await getData();
-  return <TypeTableClient data={data} />;
+export const metadata = { title: "Aircraft Types" };
+
+export default async function TypePage() {
+  const data = await getTypes();
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Aircraft Types</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          {data.length} types · click a row to view linked models
+        </p>
+      </div>
+      <TypeTableClient data={data} />
+    </div>
+  );
 }
