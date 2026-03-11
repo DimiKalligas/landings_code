@@ -1,13 +1,17 @@
 Όλα Docker
 
 # Docker
-`docker compose restart app`
+αν κάτι δεν παίζει σωστά? -> `docker compose restart app`
+Αλλάζουμε αρχείο -> `docker compose up -d --build`
+Αλλάζουμε <package.json or schema.prisma> -> `docker compose up -d --build app`
 Για να τρέξουμε κάτι μέσα στο container, 
 α) βρίσκουμε το id με `docker ps`, ->
 `docker exec -it <container-name-or-id> sh` -> </app #> & μετά τρέχουμε π.χ. `npx prisma generate` ή
 β) `docker compose exec landings_app npx prisma generate`
 τα data μας είναι persisted στο volume <landings_pgdata> ->
 το κάνουμε check με `docker volume inspect landings_pgdata` & από Docker Desktop -> Volumes -> landings_pgdata
+Για να δω βάση: `docker compose exec db psql -U devjim -d landingspg -c "SELECT COUNT(*) FROM manufacturer;"`
+Για να δω logs: `docker compose logs app -f`
 
 # migration σε Postgres, AdminJS
 SQL Server -> Script Data:
@@ -54,7 +58,8 @@ images remotePatterns στο <next.config.ts> to securely allow the next/image c
 επιστρέφει <response.access_token> &  `cookie.set('directus_session_token', response.access_token`,..
 
 # To Do
-Οταν επιλέγω manufacturer να μου δείχνει Type! `getTypeById(id)`
+Οταν πάω Type από manufacturer να κάνει back σε manufacturer! θέλει client component στο <E:\dev\NextJS\landings9\app\type\[id]\page.tsx>
+Οταν επιλέγω manufacturer να μου δείχνει Type! `getTypeById(id)` ✅ 
 αν πάω να κάνω νέο SignUp -> Unique constraint failed on the field "providerAccountId ✅ 
 Να δω τα Login/SignUp πως παίζουν με το /admin & to proxy.ts
 να βάλω τους providers & resend..

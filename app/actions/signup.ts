@@ -1,6 +1,6 @@
 'use server';
 
-import { signUpSchema } from "@/lib/schemas";
+import { signUpSchema } from "@/lib/types";
 import { redirect } from 'next/navigation';
 
 export async function signUpUser(prevState: any, formData: FormData) {

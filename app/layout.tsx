@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-// import Header from "./components/header";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { cookies } from 'next/headers';
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
 import { HeroHeader } from "@/components/header";
 
 const geistSans = Geist({
@@ -21,14 +21,13 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const cookieStore = await cookies();
-  const isLoggedIn = Boolean( // να το αλλάξω σε better-auth!
-    cookieStore.get('landings_session_token')?.value
-  );
+    children,
+  }: Readonly<{
+    children: React.ReactNode;
+  }>) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const isLoggedIn = Boolean(session);
+    // σε better-auth δεν χρειάζομαστε να κάνουμε χειροκίνητο έλεγχο του cookie, το session θα είναι null αν δεν υπάρχει έγκυρο token
 
   return (
     <html lang="en">

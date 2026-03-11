@@ -164,7 +164,7 @@ export function ManufacturerTableClient({ data }: ManufacturerTableClientProps) 
                 <TableRow
                   key={row.id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => router.push(`/manufacturer/${row.original.id}`)}
+                  onClick={() => router.push(`/type/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

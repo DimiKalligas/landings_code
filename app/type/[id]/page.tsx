@@ -16,18 +16,23 @@ import { Button } from "@/components/ui/button";
 import { ModelTableClient } from "./model-table-client";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>; // Next 15: το params είναι Promise
 }
 
 export default async function TypeDetailPage({ params }: Props) {
-  const id = Number(params.id);
+  // το params είναι Promise και όχι object, οπότε πρέπει να κάνουμε await για να το πάρουμε
+  const { id: rawId } = await params;
+  // const id = Number(params.id);
+  const id = Number(rawId);
   if (isNaN(id)) notFound();
 
   // Two parallel Prisma queries — replaces two Directus readItems calls
-  const [aircraftType, models] = await Promise.all([
-    getTypeById(id),
-    getModelsByTypeId(id),
-  ]);
+  // const [aircraftType, models] = await Promise.all([
+  //   getTypeById(id),
+  //   getModelsByTypeId(id),
+  // ]);
+  const aircraftType = await getTypeById(id)
+  // const  models = await getModelsByTypeId(id);
 
   if (!aircraftType) notFound();
 
@@ -39,6 +44,11 @@ export default async function TypeDetailPage({ params }: Props) {
           Back to Types
         </Link>
       </Button>
+      {/* na to valw se client component: */}
+          {/* <button onClick={() => router.back()} className="flex items-center">
+      <ChevronLeft className="h-4 w-4 mr-1" />
+      Back
+    </button> */}
 
       <div className="flex items-start justify-between gap-4 mb-2">
         <h1 className="text-2xl font-semibold tracking-tight">
@@ -75,7 +85,7 @@ export default async function TypeDetailPage({ params }: Props) {
         )}
       </dl>
 
-      <div>
+      {/* <div>
         <h2 className="text-lg font-semibold tracking-tight mb-4">
           Models
           <span className="ml-2 text-sm font-normal text-muted-foreground">
@@ -89,7 +99,7 @@ export default async function TypeDetailPage({ params }: Props) {
             No models linked to this type.
           </p>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
