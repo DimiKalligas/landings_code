@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AircraftType } from "@/actions/types";
+import { AircraftType } from "@/app/actions/types";
 
 export type { AircraftType };
 
