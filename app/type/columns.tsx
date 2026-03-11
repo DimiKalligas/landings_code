@@ -14,20 +14,20 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AircraftType } from "@/app/actions/types"
 
-export type Type = {
-  id: number
-  name: string | null
-  manufacturer: number | null
-  description: string | null
-  engines: number | null
-  to_manufacturer: number | null
-  also_manufacturer: number | null
-  year: number | null
-  wiki: string | null
-  notes: string | null
-  ref: number | null
-  photo: string | null
-}
+// export type Type = {
+//   id: number
+//   name: string | null
+//   manufacturer: number | null
+//   description: string | null
+//   engines: number | null
+//   to_manufacturer: number | null
+//   also_manufacturer: number | null
+//   year: number | null
+//   wiki: string | null
+//   notes: string | null
+//   ref: number | null
+//   photo: string | null
+// }
 
 // export const typeColumns: ColumnDef<Type>[] = [
 export const typeColumns: ColumnDef<AircraftType>[] = [

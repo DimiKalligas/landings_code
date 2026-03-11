@@ -24,10 +24,11 @@ import {
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { typeColumns, Type } from "./columns"
+import { typeColumns } from "./columns"
+import { AircraftType } from "@/app/actions/types"
 
 interface TypeTableClientProps {
-  data: Type[]
+  data: AircraftType[]
 }
 
 export function TypeTableClient({ data }: TypeTableClientProps) {
@@ -49,7 +50,7 @@ export function TypeTableClient({ data }: TypeTableClientProps) {
     return Array.isArray(data) ? data : []
   }, [data])
 
-  const table = useReactTable({
+  const table = useReactTable<AircraftType>({
     data: safeData,
     columns: typeColumns,
     getCoreRowModel: getCoreRowModel(),
