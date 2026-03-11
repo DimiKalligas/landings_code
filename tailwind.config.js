@@ -65,5 +65,4 @@ module.exports = {
   rules: {
     "@typescript-eslint/no-require-imports": "error"
   },
-  plugins: [require("tailwindcss-animate")],
 }
