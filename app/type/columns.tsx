@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { AircraftType } from "@/app/actions/types"
 
 export type Type = {
   id: number
@@ -28,7 +29,8 @@ export type Type = {
   photo: string | null
 }
 
-export const typeColumns: ColumnDef<Type>[] = [
+// export const typeColumns: ColumnDef<Type>[] = [
+export const typeColumns: ColumnDef<AircraftType>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -131,7 +133,7 @@ export const typeColumns: ColumnDef<Type>[] = [
     header: "Links",
     cell: ({ row }) => {
       const type = row.original
-      const hasLinks = type.wiki || type.photo
+      const hasLinks = type.wiki //|| type.photo
       
       if (!hasLinks) return <span className="text-muted-foreground">-</span>
       
@@ -148,7 +150,7 @@ export const typeColumns: ColumnDef<Type>[] = [
               <ExternalLink className="h-4 w-4" />
             </a>
           )}
-          {type.photo && (
+          {/* {type.photo && (
             <Button 
               variant="ghost" 
               size="sm" 
@@ -160,7 +162,7 @@ export const typeColumns: ColumnDef<Type>[] = [
             >
               Photo
             </Button>
-          )}
+          )} */}
         </div>
       )
     },
@@ -194,7 +196,7 @@ export const typeColumns: ColumnDef<Type>[] = [
                 </a>
               </DropdownMenuItem>
             )}
-            {type.photo && (
+            {/* {type.photo && (
               <DropdownMenuItem asChild>
                 <a href={type.photo} target="_blank" rel="noopener noreferrer">
                   View Photo
@@ -203,7 +205,7 @@ export const typeColumns: ColumnDef<Type>[] = [
             )}
             {type.notes && (
               <DropdownMenuItem>View Notes</DropdownMenuItem>
-            )}
+            )} */}
           </DropdownMenuContent>
         </DropdownMenu>
       )

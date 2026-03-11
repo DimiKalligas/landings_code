@@ -59,6 +59,7 @@ images remotePatterns στο <next.config.ts> to securely allow the next/image c
 
 # To Do
 Οταν πάω Type από manufacturer να κάνει back σε manufacturer! θέλει client component στο <E:\dev\NextJS\landings9\app\type\[id]\page.tsx>
+Sto <E:\dev\NextJS\landings9\app\type\columns.tsx> εχουμε photo & notes?
 Οταν επιλέγω manufacturer να μου δείχνει Type! `getTypeById(id)` ✅ 
 αν πάω να κάνω νέο SignUp -> Unique constraint failed on the field "providerAccountId ✅ 
 Να δω τα Login/SignUp πως παίζουν με το /admin & to proxy.ts

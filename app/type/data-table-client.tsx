@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AircraftType } from "@/actions/types";
+import { AircraftType } from "@/app/actions/types";
 import { typeColumns } from "./columns";
 
 export function TypeTableClient({ data }: { data: AircraftType[] }) {
