@@ -15,7 +15,8 @@ export default async function AdminPage({ params }: PageProps) {
   // If no model in URL, show dashboard
   if (!model || model.length === 0) {
     const usersResult = await getAllUsers();
-    const userCount = usersResult.success ? usersResult.data.length : 0;
+    const users = usersResult.data ?? [];
+    const userCount = usersResult.success ? usersResult.data?.length ?? 0 : 0;
 
     return (
       <div>
@@ -71,8 +72,8 @@ export default async function AdminPage({ params }: PageProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {usersResult.success && usersResult.data.length > 0 ? (
-                  usersResult.data.slice(0, 5).map((user: any) => (
+                {usersResult.success && users.length > 0 ? (
+                  users.slice(0, 5).map((user: any) => (
                     <tr key={user.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {user.email}
