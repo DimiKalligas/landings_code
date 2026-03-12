@@ -49,7 +49,7 @@ export default function LoginForm() {
             toast.success("Logged in successfully!");
             setTimeout(() => {
               console.log("redirecting now...");
-              window.location.href = "/dashboard";
+              window.location.replace("/dashboard");
             }, 1500);
           // toast.success("Logged in successfully!");
           // window.location.href = "/dashboard";
