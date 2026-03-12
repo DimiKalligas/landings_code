@@ -46,7 +46,8 @@ export default function LoginForm() {
         },
         onSuccess: () => {
           toast.success("Logged in successfully!");
-          router.push("/dashboard");
+          window.location.href = "/dashboard";
+          // router.push("/dashboard");
         },
         onResponse: (ctx) => {
           console.log("onResponse:", ctx.response.status, ctx.response);
