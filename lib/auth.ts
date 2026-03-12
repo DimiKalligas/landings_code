@@ -6,10 +6,10 @@ import prisma from '@/lib/prisma'
 // const prisma = new PrismaClient();
 
 export const auth = betterAuth({
-    baseURL: "https://landings-tawny.vercel.app",
+    baseURL: process.env.BETTER_AUTH_URL,
     trustedOrigins: [
-        "https://landings-3ga0vng69-dimitris-projects-d1559a9c.vercel.app ",           // your production URL
-        "https://*.vercel.app",                   // covers all preview deployments
+        "https://landings-tawny.vercel.app",           // your production URL
+        "http://localhost:3000",                   // covers all preview deployments
     ],
     database: prismaAdapter(prisma, {
         provider: "postgresql",
