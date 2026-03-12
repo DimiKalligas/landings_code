@@ -45,8 +45,14 @@ export default function LoginForm() {
           toast.error(ctx.error.message || "Invalid credentials");
         },
         onSuccess: () => {
-          toast.success("Logged in successfully!");
-          window.location.href = "/dashboard";
+            console.log("onSuccess triggered, attempting redirect...");
+            toast.success("Logged in successfully!");
+            setTimeout(() => {
+              console.log("redirecting now...");
+              window.location.href = "/dashboard";
+            }, 1500);
+          // toast.success("Logged in successfully!");
+          // window.location.href = "/dashboard";
           // router.push("/dashboard");
         },
         onResponse: (ctx) => {
