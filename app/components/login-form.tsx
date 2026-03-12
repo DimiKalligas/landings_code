@@ -38,7 +38,7 @@ export default function LoginForm() {
   await signIn.email({
       email: values.email,
       password: values.password,
-      callbackURL: "/dashboard", // Better-auth can handle the redirect for you
+      // callbackURL: "/dashboard", // removed for Vercel
       fetchOptions: {
         onError: (ctx) => {
           console.log("onError triggered:", ctx);
