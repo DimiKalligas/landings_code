@@ -1,5 +1,11 @@
 Όλα Docker
 
+# Neon
+<Neon ID>: silent-frost-46754971
+project: neon-aquamarine-canvas
+αλλάξαμε τον adapter στον database client: </lib/prisma.ts>
+ανεβάσαμε βάση με: `Get-Content backup.sql | psql your-DATABASE_URL_UNPOOLED`
+
 # Docker
 αν κάτι δεν παίζει σωστά? -> `docker compose restart app`
 Αλλάζουμε αρχείο -> `docker compose up -d --build`
