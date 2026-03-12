@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
+import { Toaster } from "sonner";
 import { HeroHeader } from "@/components/header";
 
 const geistSans = Geist({
@@ -35,7 +36,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <HeroHeader isLoggedIn={isLoggedIn} />
-
+        <Toaster position="top-right" />
         <main className="pt-24">
           {children}
         </main>

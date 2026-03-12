@@ -34,20 +34,34 @@ export default function LoginForm() {
   //     formData.append(key, value as string);
   //   });
   // πρώτα στέλναμε formData: {}, formData
-  const { data, error } = await signIn.email({
+  // const { data, error } = 
+  await signIn.email({
       email: values.email,
       password: values.password,
       callbackURL: "/dashboard", // Better-auth can handle the redirect for you
+      fetchOptions: {
+        onError: (ctx) => {
+          console.log("onError triggered:", ctx);
+          toast.error(ctx.error.message || "Invalid credentials");
+        },
+        onSuccess: () => {
+          toast.success("Logged in successfully!");
+          router.push("/dashboard");
+        },
+        onResponse: (ctx) => {
+          console.log("onResponse:", ctx.response.status, ctx.response);
+      }
+    }
     });
 
-    if (error) {
-      // Better-auth returns structured errors (e.g., "User already exists")
-      toast.error(error.message || "An error occurred during signup");
-      return;
-    }
+    // if (error) {
+    //   // Better-auth returns structured errors (e.g., "User already exists")
+    //   toast.error(error.message || "An error occurred during signup");
+    //   return;
+    // }
 
-    toast.success("Logged in successfully!");
-    router.push("/dashboard"); // Redirect user after login
+    // toast.success("Logged in successfully!");
+    // router.push("/dashboard"); // Redirect user after login
   };
 
   return (

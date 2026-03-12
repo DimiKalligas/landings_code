@@ -24,18 +24,28 @@ export default function SignUpForm() {
   const onSubmit = async (values: TSignUpSchema) => {
     // The signUp.email function from better-auth handles the POST 
     // request to your database automatically.
-    const { data, error } = await signUp.email({
+    // const { data, error } = 
+    await signUp.email({
       email: values.email,
       password: values.password,
       name: values.name|| "Admin User", // Make sure your schema includes 'name'
       callbackURL: "/dashboard", // Better-auth can handle the redirect for you
+      fetchOptions: {
+        onError: (ctx) => {
+          toast.error(ctx.error.message || "An error occurred during signup");
+        },
+        onSuccess: () => {
+          toast.success("Account created! Redirecting...");
+          router.push("/dashboard");
+        },
+      },
     });
 
-    if (error) {
-      // Better-auth returns structured errors (e.g., "User already exists")
-      toast.error(error.message || "An error occurred during signup");
-      return;
-    }
+    // if (error) {
+    //   // Better-auth returns structured errors (e.g., "User already exists")
+    //   toast.error(error.message || "An error occurred during signup");
+    //   return;
+    // }
 
     toast.success("Account created! Redirecting...");
     router.push("/dashboard");
