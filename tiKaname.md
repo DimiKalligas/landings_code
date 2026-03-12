@@ -6,6 +6,9 @@ project: neon-aquamarine-canvas
 αλλάξαμε τον adapter στον database client: </lib/prisma.ts>
 ανεβάσαμε βάση με: `Get-Content backup.sql | psql your-DATABASE_URL_UNPOOLED`
 
+# Vercel
+το προσθέσαμε στο <auth.ts>
+
 # Docker
 αν κάτι δεν παίζει σωστά? -> `docker compose restart app`
 Αλλάζουμε αρχείο -> `docker compose up -d --build`

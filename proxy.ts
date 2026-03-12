@@ -8,7 +8,8 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/dashboard')) {
     const session = await auth.api.getSession({ headers: request.headers });
     // console.log('Session:', session);
-    
+    console.log("Proxy session check:", !!session, request.nextUrl.pathname);
+
     // If no session, redirect to login
     if (!session) {
       return NextResponse.redirect(new URL('/login', request.url));
