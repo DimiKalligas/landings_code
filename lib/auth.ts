@@ -14,16 +14,16 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-  advanced: {
-    crossSubdomainCookies: {
-      enabled: false,
-    },
-    defaultCookieAttributes: {
-      secure: true,
-      httpOnly: true,
-      sameSite: "lax",
-    }
-  },
+//   advanced: {
+//     crossSubdomainCookies: {
+//       enabled: false,
+//     },
+//     defaultCookieAttributes: {
+//       secure: true,
+//       httpOnly: true,
+//       sameSite: "lax",
+//     }
+//   },
     emailAndPassword: {
         enabled: true // This replaces your manual login logic
     },
