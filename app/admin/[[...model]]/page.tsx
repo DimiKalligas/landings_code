@@ -17,11 +17,15 @@ export default async function AdminPage({ params }: PageProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+  console.log("Full session:", JSON.stringify(session, null, 2));
+// console.log("User role:", session?.user?.role);
+console.log("User as SessionUser:", JSON.stringify(session?.user, null, 2));
   if (!session) {
     redirect("/login");
   }
 
   const user = session.user as SessionUser;
+  console.log("User role:",user?.role);
   if (user.role !== "admin") redirect("/dashboard");
   // console.log("Session data:", JSON.stringify(session, null, 2));
   //   if (session.user.role !== "admin") {
