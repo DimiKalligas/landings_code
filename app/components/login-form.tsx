@@ -41,7 +41,7 @@ export default function LoginForm() {
       // callbackURL: "/dashboard", // removed for Vercel
       fetchOptions: {
         onError: (ctx) => {
-          console.log("onError triggered:", ctx);
+          console.log("onError triggered:", ctx.error);
           toast.error(ctx.error.message || "Invalid credentials");
         },
         onSuccess: () => {
@@ -50,14 +50,14 @@ export default function LoginForm() {
             setTimeout(() => {
               console.log("redirecting now...");
               window.location.replace("/dashboard");
-            }, 3500);
+            }, 1500);
           // toast.success("Logged in successfully!");
           // window.location.href = "/dashboard";
           // router.push("/dashboard");
         },
-      //   onResponse: (ctx) => {
-      //     console.log("onResponse:", ctx.response.status, ctx.response);
-      // }
+        onResponse: (ctx) => {
+          console.log("onResponse:", ctx.response.status, ctx.response.url);
+      }
     }
     });
 
