@@ -19,6 +19,10 @@ export default async function AdminPage({ params }: PageProps) {
   if (!session) {
     redirect("/login");
   }
+  console.log("Session data:", JSON.stringify(session, null, 2));
+  //   if (session.user.role !== "admin") {
+  //   redirect("/dashboard"); // or redirect("/unauthorized")
+  // }
 
   const { model } = await params;
   
