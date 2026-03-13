@@ -6,7 +6,7 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/dashboard')
   ) {
     const sessionCookie = request.cookies.get('better-auth.session_token');
-    console.log("Proxy cookie check:", !!sessionCookie, request.nextUrl.pathname);
+    // console.log("Proxy cookie check:", !!sessionCookie, request.nextUrl.pathname);
     if (!sessionCookie) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
