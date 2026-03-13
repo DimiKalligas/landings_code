@@ -50,10 +50,9 @@ export default function LoginForm() {
             setTimeout(() => {
               console.log("redirecting now...");
               window.location.replace("/dashboard");
-            }, 500);
-          // toast.success("Logged in successfully!");
-          window.location.href = "/dashboard";
-          // router.push("/dashboard");
+            }, 1500);
+          // window.location.href = "/dashboard";
+          router.push("/dashboard");
         },
         onResponse: (ctx) => {
           console.log("onResponse:", ctx.response.status, ctx.response.url);
