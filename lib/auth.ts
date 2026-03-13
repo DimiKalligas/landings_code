@@ -17,7 +17,7 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true // This replaces your manual login logic
     },
-    user: {
+    user: { // this will be included in every getSession() call
         additionalFields: {
         role: {
             type: "string",

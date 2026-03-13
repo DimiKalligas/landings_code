@@ -12,15 +12,15 @@ export default function SimpleHero() {
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center gap-4 text-center">
           {/* Announcement Badge */}
-          <Link href="#updates">
+          {/* <Link href="#updates">
             <Badge variant="secondary" className="px-3 py-1 mb-4 gap-2 hover:bg-secondary/80 transition-colors">
               New: AI Support is here <ArrowRight className="h-3 w-3" />
             </Badge>
-          </Link>
+          </Link> */}
 
           {/* Headline */}
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl md:text-7xl">
-            Retard Solutions for <span className="text-primary">Customer Engagement</span>
+            Simple Solutions for <span className="text-primary">Customer Engagement</span>
           </h1>
 
           {/* Subheadline */}

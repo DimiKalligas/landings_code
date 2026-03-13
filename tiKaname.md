@@ -65,9 +65,9 @@ images remotePatterns στο <next.config.ts> to securely allow the next/image c
 to Proxy δεν παίζει σε Serverless, γιατί κάνει timeout..
 
 # To Do
-auth validation στον /admin
+auth validation στον /admin ✅ 
 Οταν είμαι στο/admin να κάνει logout
-Οταν ο admin βλεπει users να βλέπει αν είναι admin η όχι
+Οταν ο admin βλεπει users να βλέπει αν είναι admin η όχι ✅ 
 Οταν πάω Type από manufacturer να κάνει back σε manufacturer! θέλει client component στο <E:\dev\NextJS\landings9\app\type\[id]\page.tsx>
 Sto <E:\dev\NextJS\landings9\app\type\columns.tsx> εχουμε photo & notes?
 Οταν επιλέγω manufacturer να μου δείχνει Type! `getTypeById(id)` ✅ 
