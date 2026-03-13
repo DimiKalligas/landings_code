@@ -8,6 +8,8 @@ export default async function Dashboard() {
     headers: await headers(),
   });
 
+console.log("Session data:", JSON.stringify(session, null, 2));
+
   if (!session) {
     redirect("/login");
   }

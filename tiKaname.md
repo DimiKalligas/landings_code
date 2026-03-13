@@ -62,9 +62,7 @@ shadcn block: <SimpleHero>
 images remotePatterns στο <next.config.ts> to securely allow the next/image component to optimize and serve images from external URLs. 
 
 # Auth
-Για SignUp: ***να αλλαχτούν με better-auth***
-Για login: `response = await client.login({ email, password });` & 
-επιστρέφει <response.access_token> &  `cookie.set('directus_session_token', response.access_token`,..
+to Proxy δεν παίζει σε Serverless, γιατί κάνει timeout..
 
 # To Do
 auth validation στον /admin
