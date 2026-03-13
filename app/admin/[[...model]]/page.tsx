@@ -2,6 +2,9 @@ import DynamicCrudPage from "@/app/admin/components/DynamicCrudPage";
 import { getModelMetadata, getDisplayName } from "@/app/admin/lib/schema-introspection";
 import { getAllUsers } from "@/app/admin/actions";
 import { Users, Database } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{
@@ -10,6 +13,13 @@ interface PageProps {
 }
 
 export default async function AdminPage({ params }: PageProps) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) {
+    redirect("/login");
+  }
+
   const { model } = await params;
   
   // If no model in URL, show dashboard
