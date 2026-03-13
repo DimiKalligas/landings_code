@@ -5,6 +5,7 @@ import { Users, Database } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import type { SessionUser } from "@/lib/auth-types";
 
 interface PageProps {
   params: Promise<{
@@ -19,7 +20,10 @@ export default async function AdminPage({ params }: PageProps) {
   if (!session) {
     redirect("/login");
   }
-  console.log("Session data:", JSON.stringify(session, null, 2));
+
+  const user = session.user as SessionUser;
+  if (user.role !== "admin") redirect("/dashboard");
+  // console.log("Session data:", JSON.stringify(session, null, 2));
   //   if (session.user.role !== "admin") {
   //   redirect("/dashboard"); // or redirect("/unauthorized")
   // }

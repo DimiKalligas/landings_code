@@ -55,9 +55,9 @@ export default function LoginForm() {
           // window.location.href = "/dashboard";
           // router.push("/dashboard");
         },
-        onResponse: (ctx) => {
-          console.log("onResponse:", ctx.response.status, ctx.response);
-      }
+      //   onResponse: (ctx) => {
+      //     console.log("onResponse:", ctx.response.status, ctx.response);
+      // }
     }
     });
 
