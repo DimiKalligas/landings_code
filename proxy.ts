@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { log } from 'node:console';
 
 export async function proxy(request: NextRequest) {
   if (

@@ -52,7 +52,7 @@ export default function LoginForm() {
               window.location.replace("/dashboard");
             }, 1500);
           // window.location.href = "/dashboard";
-          router.push("/dashboard");
+          // router.push("/dashboard");
         },
         onResponse: (ctx) => {
           console.log("onResponse:", ctx.response.status, ctx.response.url);
