@@ -14,16 +14,16 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-//   advanced: {
-//     crossSubdomainCookies: {
-//       enabled: false,
-//     },
-//     defaultCookieAttributes: {
-//       secure: true,
-//       httpOnly: true,
-//       sameSite: "lax",
-//     }
-//   },
+    advanced: {
+        crossSubdomainCookies: {
+        enabled: false,
+        },
+        defaultCookieAttributes: {
+        secure: true, // άλλαξε το cookie σε __Secure-next-auth.session-token για να λειτουργεί μόνο σε HTTPS, προστατεύοντας από
+        httpOnly: true, //  cookie not accessible via JavaScript, prevents XSS attacks from stealing the session token
+        sameSite: "lax", // προστατεύει από CSRF επιθέσεις, επιτρέποντας cookies μόνο σε ίδιους ιστότοπους ή σε περιπτώσεις όπου ο χρήστης ξεκινά την πλοήγηση
+        }
+    },
     emailAndPassword: {
         enabled: true // This replaces your manual login logic
     },

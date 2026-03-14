@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
+import type { SessionUser } from "@/lib/auth-types";
+import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
 import { HeroHeader } from "@/components/header";
 
@@ -27,6 +29,16 @@ export default async function RootLayout({
     children: React.ReactNode;
   }>) {
     const session = await auth.api.getSession({ headers: await headers() });
+  
+    if (!session) {
+      redirect("/login");
+    }
+    
+// RESTRICT ALL ACCESS *****************************************
+    const user = session.user as SessionUser;
+      
+    if (user.role !== "admin") redirect("/login");
+// RESTRICT ALL ACCESS *****************************************
     const isLoggedIn = Boolean(session);
     // σε better-auth δεν χρειάζομαστε να κάνουμε χειροκίνητο έλεγχο του cookie, το session θα είναι null αν δεν υπάρχει έγκυρο token
 

@@ -9,7 +9,7 @@ project: neon-aquamarine-canvas
 # Vercel
 το προσθέσαμε στο <auth.ts>
 
-# Docker
+# Docker for local development
 αν κάτι δεν παίζει σωστά? -> `docker compose restart app`
 Αλλάζουμε αρχείο -> `docker compose up -d --build`
 Αλλάζουμε <package.json or schema.prisma> -> `docker compose up -d --build app`
@@ -58,30 +58,28 @@ shadcn block: <SimpleHero>
 
 # Setup
 <components.json> -> tailwind configuration 
-`CORS_ORIGIN=true` στο <env.local> ΝΑ ΒΓΕΙ στο production
+`CORS_ORIGIN=true` στο <env.local> δεν μπαίνει στο production
 images remotePatterns στο <next.config.ts> to securely allow the next/image component to optimize and serve images from external URLs. 
 
 # Auth
 to Proxy δεν παίζει σε Serverless, γιατί κάνει timeout..
 
 # To Do
-auth validation στον /admin ✅ 
-Οταν είμαι στο/admin να κάνει logout
-Οταν ο admin βλεπει users να βλέπει αν είναι admin η όχι ✅ 
 Οταν πάω Type από manufacturer να κάνει back σε manufacturer! θέλει client component στο <E:\dev\NextJS\landings9\app\type\[id]\page.tsx>
+να βάλω τους providers & resend..
+Files/media: Move file storage to S3 or dedicated volume and update file URLs.
+Ops: Add tests, CI, DB backups, monitoring, and connection pooling.
+Check Deployment prices Vercel&Neon / VPS
+να δούμε Paypal?
+auth validation στον /admin ✅ 
+Οταν είμαι στο/admin να κάνει logout ✅ 
+Οταν ο admin βλεπει users να βλέπει αν είναι admin η όχι ✅ 
 Sto <E:\dev\NextJS\landings9\app\type\columns.tsx> εχουμε photo & notes?
 Οταν επιλέγω manufacturer να μου δείχνει Type! `getTypeById(id)` ✅ 
 αν πάω να κάνω νέο SignUp -> Unique constraint failed on the field "providerAccountId ✅ 
-Να δω τα Login/SignUp πως παίζουν με το /admin & to proxy.ts
-να βάλω τους providers & resend..
 Docker Postgres: Add docker-compose.yml with persistent volume and credentials.✅ 
 Prisma schema: Introspect DB (prisma db pull) or write prisma/schema.prisma to match Postgres.✅ 
 Prisma client: Run npx prisma generate and add lib/prisma.ts.✅ 
 Data import: Load your existing Postgres dump into the Docker container.✅ 
 Replace Directus usage: Replace calls in directus.ts and components with Prisma queries.✅ 
-****Auth (Better-Auth): Integrate Better-Auth, map/migrate users, ensure password-hash compatibility, add session/JWT flows.
-Admin panel (AdminJS): Stand up AdminJS (with Prisma adapter) as an Express microservice or Next.js API route; secure with Better-Auth. -> update the server actions and add an /api/auth/me route to use the Prisma-backed Better-Auth helpers (register, login, logout, session).✅
-Files/media: Move file storage to S3 or dedicated volume and update file URLs.
-Στο layout να αλλάξω το cookie.get σε better-auth!
-Ops: Add tests, CI, DB backups, monitoring, and connection pooling.
-Test Deployment!!!
+Admin panel secure with Better-Auth. -> update the server actions and add an /api/auth/me route to use the Prisma-backed Better-Auth helpers (register, login, logout, session).✅
