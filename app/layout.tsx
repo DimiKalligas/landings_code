@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import type { SessionUser } from "@/lib/auth-types";
-import { redirect } from "next/navigation";
+// import type { SessionUser } from "@/lib/auth-types";
+// import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
 import { HeroHeader } from "@/components/header";
 

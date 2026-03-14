@@ -6,9 +6,27 @@
 import { getTypes } from "@/app/actions/types";
 import { TypeTableClient } from "./data-table-client";
 
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import type { SessionUser } from "@/lib/auth-types";
+
 export const metadata = { title: "Aircraft Types" };
 
 export default async function TypePage() {
+   // RESTRICT TO ALL BUT ADMIN *******************
+    const session = await auth.api.getSession({
+        headers: await headers(),
+      });
+    
+      if (!session) {
+        redirect("/login");
+      }
+    
+      const user = session.user as SessionUser;
+      
+      if (user.role !== "admin") redirect("/login");
+  // RESTRICT TO ALL BUT ADMIN *******************
   const data = await getTypes();
 
   return (

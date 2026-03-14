@@ -9,10 +9,29 @@
 import { getManufacturers } from "@/app/actions/manufacturers";
 import { ManufacturerTableClient } from "./data-table-client";
 
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import type { SessionUser } from "@/lib/auth-types";
+
 export const metadata = { title: "Manufacturers" };
 
 export default async function ManufacturerPage() {
-  // ✅ Direct Prisma call — replaces your fetch('/api/manufacturers')
+ // RESTRICT TO ALL BUT ADMIN *******************
+  const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  
+    if (!session) {
+      redirect("/login");
+    }
+  
+    const user = session.user as SessionUser;
+    
+    if (user.role !== "admin") redirect("/login");
+// RESTRICT TO ALL BUT ADMIN *******************
+
+  // Direct Prisma call — replacing fetch('/api/manufacturers')
   const data = await getManufacturers();
 
   return (
