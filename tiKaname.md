@@ -65,6 +65,9 @@ images remotePatterns στο <next.config.ts> to securely allow the next/image c
 to Proxy δεν παίζει σε Serverless, γιατί κάνει timeout..
 
 # To Do
+1. manufacturer joins to type!
+2. o admin να έχει τη λειτουργικότητα του user (search, all fields etc.)
+3. Pagination: add << >>
 Οταν πάω Type από manufacturer να κάνει back σε manufacturer! θέλει client component στο <E:\dev\NextJS\landings9\app\type\[id]\page.tsx>
 να βάλω τους providers & resend..
 Files/media: Move file storage to S3 or dedicated volume and update file URLs.

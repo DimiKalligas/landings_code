@@ -35,9 +35,9 @@ export default async function RootLayout({
     }
     
 // RESTRICT ALL ACCESS *****************************************
-    const user = session.user as SessionUser;
+    // const user = session.user as SessionUser;
       
-    if (user.role !== "admin") redirect("/login");
+    // if (user.role !== "admin") redirect("/login");
 // RESTRICT ALL ACCESS *****************************************
     const isLoggedIn = Boolean(session);
     // σε better-auth δεν χρειάζομαστε να κάνουμε χειροκίνητο έλεγχο του cookie, το session θα είναι null αν δεν υπάρχει έγκυρο token
