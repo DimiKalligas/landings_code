@@ -13,6 +13,12 @@ interface PageProps {
   }>;
 }
 
+const modelDisplayFields: Record<string, string[]> = {
+  session: ['userId', 'token', 'IpAddress', 'createdAt', 'expiresAt'],
+  user: ['name', 'email', 'role', 'createdAt'],
+  account: ['userId', 'providerId', 'type', 'createdAt'],
+};
+
 export default async function AdminPage({ params }: PageProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -147,6 +153,7 @@ export default async function AdminPage({ params }: PageProps) {
       model={modelName}
       displayName={getDisplayName(modelName)}
       fields={metadata.fields}
+      displayFields={modelDisplayFields[modelName]}
     />
   );
 }

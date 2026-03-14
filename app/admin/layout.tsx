@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { listAllModels, getDisplayName } from "@/app/admin/lib/schema-introspection";
+import SignOutButton from "@/app/components/sign-out-button";
 
 export default async function AdminLayout({
   children,
@@ -87,7 +88,7 @@ export default async function AdminLayout({
         <div className="mt-auto pt-8 border-t border-slate-700">
           <button className="w-full flex items-center gap-2 px-4 py-2 rounded hover:bg-slate-800 transition">
             <LogOut className="w-4 h-4" />
-            Logout
+            <SignOutButton label="Sign Out" />
           </button>
         </div>
       </div>

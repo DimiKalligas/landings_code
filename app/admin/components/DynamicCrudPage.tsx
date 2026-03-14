@@ -16,12 +16,14 @@ interface DynamicCrudPageProps {
   model: string;
   displayName: string;
   fields: Field[];
+  displayFields?: string[];
 }
 
 export default function DynamicCrudPage({
   model,
   displayName,
   fields,
+  displayFields,
 }: DynamicCrudPageProps) {
   const [records, setRecords] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
@@ -254,6 +256,8 @@ export default function DynamicCrudPage({
               <tr>
                 {fields
                   .filter((f) => !f.isRelation && !f.isList)
+                  .filter((f) => displayFields ? displayFields.includes(f.name) : true)
+                  .slice(0, displayFields ? displayFields.length : 4)
                   .slice(0, 4)
                   .map((field) => (
                     <th
@@ -283,6 +287,8 @@ export default function DynamicCrudPage({
                   <tr key={record.id} className="hover:bg-gray-50">
                     {fields
                       .filter((f) => !f.isRelation && !f.isList)
+                      .filter((f) => displayFields ? displayFields.includes(f.name) : true)
+                      .slice(0, displayFields ? displayFields.length : 4)
                       .slice(0, 4)
                       .map((field) => (
                         <td
