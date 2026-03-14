@@ -30,11 +30,11 @@ export default async function RootLayout({
   }>) {
     const session = await auth.api.getSession({ headers: await headers() });
   
-    if (!session) {
-      redirect("/login");
-    }
+    // RESTRICT ALL ACCESS *****************************************
+    // if (!session) {
+    //   redirect("/login");
+    // }
     
-// RESTRICT ALL ACCESS *****************************************
     // const user = session.user as SessionUser;
       
     // if (user.role !== "admin") redirect("/login");
