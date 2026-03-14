@@ -258,7 +258,7 @@ export default function DynamicCrudPage({
                   .filter((f) => !f.isRelation && !f.isList)
                   .filter((f) => displayFields ? displayFields.includes(f.name) : true)
                   .slice(0, displayFields ? displayFields.length : 4)
-                  .slice(0, 4)
+                  // .slice(0, 4)
                   .map((field) => (
                     <th
                       key={field.name}
@@ -289,14 +289,28 @@ export default function DynamicCrudPage({
                       .filter((f) => !f.isRelation && !f.isList)
                       .filter((f) => displayFields ? displayFields.includes(f.name) : true)
                       .slice(0, displayFields ? displayFields.length : 4)
-                      .slice(0, 4)
+                      // .slice(0, 4)
                       .map((field) => (
+                        // <td
+                        //   key={field.name}
+                        //   className="px-6 py-4 text-sm text-gray-900"
+                        // >
+                        //   {record[field.name] 
+                        //     ? String(record[field.name]).substring(0, 50)
+                        //     : field.type === 'Boolean' ? 'false' : '-'
+                        //   }
+                        // </td>
                         <td
                           key={field.name}
                           className="px-6 py-4 text-sm text-gray-900"
                         >
-                          {record[field.name] 
-                            ? String(record[field.name]).substring(0, 50)
+                          {record[field.name]
+                            ? field.type === 'DateTime'
+                              ? new Date(record[field.name]).toLocaleString('en-GB', {
+                                  dateStyle: 'short',
+                                  timeStyle: 'short'
+                                })
+                              : String(record[field.name]).substring(0, 50)
                             : field.type === 'Boolean' ? 'false' : '-'
                           }
                         </td>
