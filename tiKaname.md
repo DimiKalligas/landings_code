@@ -16,7 +16,8 @@ project: neon-aquamarine-canvas
 Για να τρέξουμε κάτι μέσα στο container, 
 α) βρίσκουμε το id με `docker ps`, ->
 `docker exec -it <container-name-or-id> sh` -> </app #> & μετά τρέχουμε π.χ. `npx prisma generate` ή
-β) `docker compose exec landings_app npx prisma generate`
+β) `docker compose exec landings_app npx prisma generate`, ή
+`docker compose exec landings_app npm install @radix-ui/react-dialog`
 τα data μας είναι persisted στο volume <landings_pgdata> ->
 το κάνουμε check με `docker volume inspect landings_pgdata` & από Docker Desktop -> Volumes -> landings_pgdata
 Για να δω βάση: `docker compose exec db psql -U devjim -d landingspg -c "SELECT COUNT(*) FROM manufacturer;"`

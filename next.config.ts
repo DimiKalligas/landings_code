@@ -12,9 +12,9 @@ const nextConfig: NextConfig = {
         hostname
     }))
   },
-    experimental: {
-    esmExternals: false,
-  },
+  //   experimental: {
+  //   esmExternals: false,
+  // },
 }
 
 export default nextConfig;
