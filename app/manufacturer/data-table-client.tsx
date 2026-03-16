@@ -40,7 +40,7 @@ import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Loader2, ChevronDown, ChevronRight } from "lucide-react";
 import { Manufacturer } from "@/app/actions/manufacturers";
 import { manufacturerColumns } from "./columns";
-import { getTypesByManufacturer, TypeRecord } from "@/app/actions/types";
+import { getTypesByManufacturer, AircraftType } from "@/app/actions/types";
 
 interface ManufacturerTableClientProps {
   data: Manufacturer[];
@@ -53,7 +53,7 @@ export function ManufacturerTableClient({ data }: ManufacturerTableClientProps) 
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 20 });
 
   const [expandedId, setExpandedId] = React.useState<number | null>(null);
-  const [types, setTypes] = React.useState<TypeRecord[]>([]);
+  const [types, setTypes] = React.useState<AircraftType[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
 
   const table = useReactTable({
@@ -251,7 +251,7 @@ export function ManufacturerTableClient({ data }: ManufacturerTableClientProps) 
   );
 }
 
-function TypeCard({ type }: { type: TypeRecord }) {
+function TypeCard({ type }: { type: AircraftType }) {
   return (
     <div className="rounded-lg border bg-background p-3 flex gap-3 shadow-sm">
       {type.photo && (
