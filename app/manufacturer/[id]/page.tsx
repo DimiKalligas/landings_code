@@ -6,10 +6,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ExternalLink } from "lucide-react";
-import { getManufacturerById } from "@/app/actions/manufacturers";
+// import { getManufacturerById } from "@/app/actions/manufacturers";
 import { getTypeById, getModelsByTypeId } from "@/app/actions/types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 
 interface Props {
   params: { id: string };

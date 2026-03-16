@@ -112,6 +112,7 @@ model manufacturer {
   logo       String? @db.VarChar(1)
   notes      String?
   fk_refid   String? @db.VarChar(200)
+  types      type[] // link to type table
 
   @@map("manufacturer")
 }
@@ -148,18 +149,19 @@ model model {
 }
 
 model type {
-  id                Int     @id
-  name              String? @db.VarChar(80)
+  id                Int           @id
+  name              String?       @db.VarChar(80)
   manufacturer      Int?
-  description       String? @db.VarChar(15)
-  engines           String? @db.VarChar(255)
-  to_manufacturer   Int?    @db.SmallInt
-  also_manufacturer Int?    @db.SmallInt
-  year              Int?    @db.SmallInt
+  description       String?       @db.VarChar(15)
+  engines           String?       @db.VarChar(255)
+  to_manufacturer   Int?          @db.SmallInt
+  also_manufacturer Int?          @db.SmallInt
+  year              Int?          @db.SmallInt
   wiki              String?
   notes             String?
-  ref               String? @db.VarChar(255)
+  ref               String?       @db.VarChar(255)
   photo             String?
+  manufacturer_rel  manufacturer? @relation(fields: [manufacturer], references: [id]) // pointing to manufacturer
 
   @@map("type")
 }

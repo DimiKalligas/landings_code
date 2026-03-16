@@ -11,7 +11,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname
     }))
-  }
+  },
+    experimental: {
+    esmExternals: false,
+  },
 }
 
 export default nextConfig;

@@ -10,6 +10,7 @@ export type AircraftType = {
   engines: string | null;
   year: number | null;
   wiki: string | null;
+  photo: string | null;
 };
 
 export type AircraftModel = {
@@ -31,7 +32,6 @@ export type AircraftModel = {
 };
 
 // ─── List of aircraft types (master table) ───────────────────────────────────
-
 export async function getTypes(): Promise<AircraftType[]> {
   const rows = await prisma.type.findMany({
     select: {
@@ -42,6 +42,7 @@ export async function getTypes(): Promise<AircraftType[]> {
       engines: true,
       year: true,
       wiki: true,
+      photo: true,
     },
     orderBy: { name: "asc" },
   });
@@ -49,17 +50,33 @@ export async function getTypes(): Promise<AircraftType[]> {
 }
 
 // ─── Single type ─────────────────────────────────────────────────────────────
-
 export async function getTypeById(id: number): Promise<AircraftType | null> {
   return prisma.type.findUnique({ where: { id } }) as Promise<AircraftType | null>;
 }
 
 // ─── Models linked to a type (detail table shown on row click) ───────────────
-
 export async function getModelsByTypeId(typeId: number): Promise<AircraftModel[]> {
   const rows = await prisma.model.findMany({
     where: { fk_typeid: typeId },
     orderBy: { model: "asc" },
   });
   return rows as AircraftModel[];
+}
+
+export async function getTypesByManufacturer(manufacturerId: number): Promise<AircraftType[]> {
+  const types = await prisma.type.findMany({
+    where: { manufacturer: manufacturerId },
+    select: {
+      id: true,
+      name: true,
+      manufacturer: true,
+      description: true,
+      engines: true,
+      year: true,
+      wiki: true,
+      photo: true,
+    },
+    orderBy: { year: "asc" },
+  });
+  return types;
 }
