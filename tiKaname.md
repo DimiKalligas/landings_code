@@ -66,7 +66,7 @@ images remotePatterns στο <next.config.ts> to securely allow the next/image c
 to Proxy δεν παίζει σε Serverless, γιατί κάνει timeout..
 
 # To Do
-2. o admin να έχει τη λειτουργικότητα του user (search, all fields etc.)
+2. o admin να έχει τη λειτουργικότητα του user (search, all fields etc.) ✅ To id filter πρέπει να είναι exact?
 3. Pagination: add << >>
 4. να βάλω τους providers & .
 να εμφανίζονται τα models ala types ✅ 

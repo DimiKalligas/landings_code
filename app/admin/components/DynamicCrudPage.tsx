@@ -1,8 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getRecords, deleteRecord, createRecord, updateRecord } from '@/app/admin/actions';
-import { Plus, Trash2, Edit2, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Plus, Trash2, Edit2, ChevronLeft, ChevronRight,
+  Search, ChevronsUpDown, ChevronUp, ChevronDown,
+} from 'lucide-react';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+  createColumnHelper,
+  ColumnDef,
+  FilterFn,
+  Row,
+} from '@tanstack/react-table';
 
 interface Field {
   name: string;
@@ -19,58 +34,111 @@ interface DynamicCrudPageProps {
   displayFields?: string[];
 }
 
+const globalFilterFn: FilterFn<any> = (row: Row<any>, _columnId: string, filterValue: string) => {
+  const search = filterValue.toLowerCase();
+  return Object.values(row.original).some(
+    (val) => val != null && String(val).toLowerCase().includes(search)
+  );
+};
+
 export default function DynamicCrudPage({
-  model,
-  displayName,
-  fields,
-  displayFields,
+  model, displayName, fields, displayFields,
 }: DynamicCrudPageProps) {
   const [records, setRecords] = useState<any[]>([]);
-  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [page, setPage] = useState(0);
   const [editingId, setEditingId] = useState<string | number | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [globalFilter, setGlobalFilter] = useState('');
 
-  const itemsPerPage = 10;
-  
-  // Filter out relation fields and ID fields for form display
-  const editableFields = fields.filter(
-    (f) => !f.isRelation && f.name !== 'id'
+  const editableFields = fields.filter((f) => !f.isRelation && f.name !== 'id');
+
+  const visibleFields = useMemo(
+    () =>
+      fields
+        .filter((f) => !f.isRelation && !f.isList)
+        .filter((f) => (displayFields ? displayFields.includes(f.name) : true))
+        .slice(0, displayFields ? displayFields.length : 4),
+    [fields, displayFields]
   );
 
+  const columnHelper = createColumnHelper<any>();
+  const columns = useMemo<ColumnDef<any, any>[]>(
+    () => [
+      ...visibleFields.map((field) =>
+        columnHelper.accessor(field.name, {
+          header: field.name.charAt(0).toUpperCase() + field.name.slice(1),
+          cell: (info) => {
+            const val = info.getValue();
+            if (val == null) return field.type === 'Boolean' ? 'false' : '-';
+            if (field.type === 'DateTime')
+              return new Date(val).toLocaleString('en-GB', {
+                dateStyle: 'short',
+                timeStyle: 'short',
+              });
+            return String(val).substring(0, 50);
+          },
+          filterFn: 'includesString',
+          enableSorting: true,
+        })
+      ),
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => handleEdit(row.original)}
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded transition"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDelete(row.original.id)}
+              className="p-2 text-red-600 hover:bg-red-50 rounded transition"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ),
+      }),
+    ],
+    [visibleFields]
+  );
+
+  const table = useReactTable({
+    data: records,
+    columns,
+    globalFilterFn,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    initialState: { pagination: { pageSize: 10 } },
+  });
+
   useEffect(() => {
-    // Initialize form data
     const initialData: Record<string, any> = {};
-    editableFields.forEach((field) => {
-      initialData[field.name] = '';
-    });
+    editableFields.forEach((f) => { initialData[f.name] = ''; });
     setFormData(initialData);
   }, []);
 
-  useEffect(() => {
-    fetchRecords();
-  }, [page]);
+  useEffect(() => { fetchRecords(); }, []);
 
   async function fetchRecords() {
     setLoading(true);
     setError('');
     try {
-      const result = await getRecords(
-        model,
-        page * itemsPerPage,
-        itemsPerPage
-      );
-      if (result.success) {
-        setRecords(result.data);
-        setTotal(result.total || 0);
-      } else {
-        setError(result.error || `Failed to fetch ${model}`);
-      }
-    } catch (err) {
+      const result = await getRecords(model, 0, 10000);
+      if (result.success) setRecords(result.data);
+      else setError(result.error || `Failed to fetch ${model}`);
+    } catch {
       setError('An error occurred');
     } finally {
       setLoading(false);
@@ -79,7 +147,6 @@ export default function DynamicCrudPage({
 
   async function handleDelete(id: string | number) {
     if (!confirm(`Are you sure you want to delete this ${displayName}?`)) return;
-
     try {
       const result = await deleteRecord(model, String(id));
       if (result.success) {
@@ -89,16 +156,13 @@ export default function DynamicCrudPage({
       } else {
         setError(result.error || `Failed to delete ${displayName}`);
       }
-    } catch (err) {
-      setError('An error occurred');
-    }
+    } catch { setError('An error occurred'); }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       if (editingId) {
         const result = await updateRecord(model, String(editingId), formData);
@@ -107,66 +171,58 @@ export default function DynamicCrudPage({
           setEditingId(null);
           setShowForm(false);
           fetchRecords();
-        } else {
-          setError(result.error || `Failed to update ${displayName}`);
-        }
+        } else setError(result.error || `Failed to update ${displayName}`);
       } else {
         const result = await createRecord(model, formData);
         if (result.success) {
           setSuccess(`${displayName} created successfully`);
-          const initialData: Record<string, any> = {};
-          editableFields.forEach((field) => {
-            initialData[field.name] = '';
-          });
-          setFormData(initialData);
+          const empty: Record<string, any> = {};
+          editableFields.forEach((f) => { empty[f.name] = ''; });
+          setFormData(empty);
           setShowForm(false);
           fetchRecords();
-        } else {
-          setError(result.error || `Failed to create ${displayName}`);
-        }
+        } else setError(result.error || `Failed to create ${displayName}`);
       }
       setTimeout(() => setSuccess(''), 3000);
-    } catch (err) {
-      setError('An error occurred');
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError('An error occurred'); }
+    finally { setLoading(false); }
   }
 
   function handleEdit(record: any) {
     setEditingId(record.id);
     const data: Record<string, any> = {};
-    editableFields.forEach((field) => {
-      data[field.name] = record[field.name] || '';
-    });
+    editableFields.forEach((f) => { data[f.name] = record[f.name] || ''; });
     setFormData(data);
     setShowForm(true);
   }
 
   function handleNew() {
     setEditingId(null);
-    const initialData: Record<string, any> = {};
-    editableFields.forEach((field) => {
-      initialData[field.name] = '';
-    });
-    setFormData(initialData);
+    const empty: Record<string, any> = {};
+    editableFields.forEach((f) => { empty[f.name] = ''; });
+    setFormData(empty);
     setShowForm(true);
   }
 
   function getInputType(field: Field): string {
-    const type = field.type.toLowerCase();
-    if (type.includes('email')) return 'email';
-    if (type.includes('int') || type.includes('float') || type.includes('decimal')) return 'number';
-    if (type.includes('bool')) return 'checkbox';
-    if (type.includes('datetime') || type.includes('date')) return 'datetime-local';
+    const t = field.type.toLowerCase();
+    if (t.includes('email')) return 'email';
+    if (t.includes('int') || t.includes('float') || t.includes('decimal')) return 'number';
+    if (t.includes('bool')) return 'checkbox';
+    if (t.includes('datetime') || t.includes('date')) return 'datetime-local';
     return 'text';
   }
 
+  const { pageIndex, pageSize } = table.getState().pagination;
+  const totalFiltered = table.getFilteredRowModel().rows.length;
+
   return (
     <div>
+      {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">{displayName}</h1>
         <button
+          type="button"
           onClick={handleNew}
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
@@ -175,18 +231,11 @@ export default function DynamicCrudPage({
         </button>
       </div>
 
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
+      {/* Alerts */}
+      {error && <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">{error}</div>}
+      {success && <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">{success}</div>}
 
-      {success && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          {success}
-        </div>
-      )}
-
+      {/* Form */}
       {showForm && (
         <div className="mb-8 bg-white rounded-lg shadow p-6">
           <h2 className="text-2xl font-semibold mb-4">
@@ -199,36 +248,24 @@ export default function DynamicCrudPage({
                   {field.name.charAt(0).toUpperCase() + field.name.slice(1).replace(/([A-Z])/g, ' $1')}
                   {field.isRequired && <span className="text-red-500">*</span>}
                 </label>
-
                 {getInputType(field) === 'checkbox' ? (
                   <input
                     type="checkbox"
                     checked={formData[field.name] === true || formData[field.name] === 'true'}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        [field.name]: e.target.checked,
-                      })
-                    }
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={(e) => setFormData({ ...formData, [field.name]: e.target.checked })}
+                    className="border border-gray-300 rounded"
                   />
                 ) : (
                   <input
                     type={getInputType(field)}
                     required={field.isRequired}
                     value={formData[field.name] || ''}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        [field.name]: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 )}
               </div>
             ))}
-
             <div className="flex gap-2">
               <button
                 type="submit"
@@ -249,94 +286,84 @@ export default function DynamicCrudPage({
         </div>
       )}
 
+      {/* Global search */}
+      <div className="relative mb-4 max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <input
+          value={globalFilter}
+          onChange={(e) => { setGlobalFilter(e.target.value); table.setPageIndex(0); }}
+          placeholder={`Search ${displayName.toLowerCase()}…`}
+          className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      {/* Table — 100% native HTML, no shadcn table components */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
-              <tr>
-                {fields
-                  .filter((f) => !f.isRelation && !f.isList)
-                  .filter((f) => displayFields ? displayFields.includes(f.name) : true)
-                  .slice(0, displayFields ? displayFields.length : 4)
-                  // .slice(0, 4)
-                  .map((field) => (
+              {table.getHeaderGroups().map((hg) => (
+                <tr key={hg.id}>
+                  {hg.headers.map((header) => (
                     <th
-                      key={field.name}
-                      className="px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                      key={header.id}
+                      className="px-6 py-3 text-left text-sm font-semibold text-gray-900 select-none"
                     >
-                      {field.name.charAt(0).toUpperCase() + field.name.slice(1)}
+                      {header.isPlaceholder ? null : (
+                        <div className="space-y-1">
+                          {header.column.getCanSort() ? (
+                            <button
+                              type="button"
+                              onClick={header.column.getToggleSortingHandler()}
+                              className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {header.column.getIsSorted() === 'asc' ? (
+                                <ChevronUp className="w-3 h-3" />
+                              ) : header.column.getIsSorted() === 'desc' ? (
+                                <ChevronDown className="w-3 h-3" />
+                              ) : (
+                                <ChevronsUpDown className="w-3 h-3 text-gray-400" />
+                              )}
+                            </button>
+                          ) : (
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          )}
+                          {header.column.getCanFilter() && (
+                            <input
+                              value={(header.column.getFilterValue() as string) ?? ''}
+                              onChange={(e) => { header.column.setFilterValue(e.target.value); table.setPageIndex(0); }}
+                              placeholder="Filter…"
+                              className="w-full px-2 py-0.5 text-xs font-normal border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            />
+                          )}
+                        </div>
+                      )}
                     </th>
                   ))}
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Actions
-                </th>
-              </tr>
+                </tr>
+              ))}
             </thead>
-            <tbody className="divide-y">
+            <tbody>
               {loading ? (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
+                  <td colSpan={columns.length} className="px-6 py-4 text-center text-gray-500">
                     Loading...
                   </td>
                 </tr>
-              ) : records.length > 0 ? (
-                records.map((record) => (
-                  <tr key={record.id} className="hover:bg-gray-50">
-                    {fields
-                      .filter((f) => !f.isRelation && !f.isList)
-                      .filter((f) => displayFields ? displayFields.includes(f.name) : true)
-                      .slice(0, displayFields ? displayFields.length : 4)
-                      // .slice(0, 4)
-                      .map((field) => (
-                        // <td
-                        //   key={field.name}
-                        //   className="px-6 py-4 text-sm text-gray-900"
-                        // >
-                        //   {record[field.name] 
-                        //     ? String(record[field.name]).substring(0, 50)
-                        //     : field.type === 'Boolean' ? 'false' : '-'
-                        //   }
-                        // </td>
-                        <td
-                          key={field.name}
-                          className="px-6 py-4 text-sm text-gray-900"
-                        >
-                          {record[field.name]
-                            ? field.type === 'DateTime'
-                              ? new Date(record[field.name]).toLocaleString('en-GB', {
-                                  dateStyle: 'short',
-                                  timeStyle: 'short'
-                                })
-                              : String(record[field.name]).substring(0, 50)
-                            : field.type === 'Boolean' ? 'false' : '-'
-                          }
-                        </td>
-                      ))}
-                    <td className="px-6 py-4 text-sm flex gap-2">
-                      <button
-                        onClick={() => handleEdit(record)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded transition"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(record.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded transition"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+              ) : table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50 border-b last:border-0">
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-6 py-4 text-sm text-gray-900">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
+                  <td colSpan={columns.length} className="px-6 py-4 text-center text-gray-500">
                     No records found
                   </td>
                 </tr>
@@ -346,30 +373,34 @@ export default function DynamicCrudPage({
         </div>
 
         {/* Pagination */}
-        {total > itemsPerPage && (
-          <div className="flex justify-between items-center px-6 py-4 border-t">
-            <span className="text-sm text-gray-600">
-              Showing {page * itemsPerPage + 1} to{' '}
-              {Math.min((page + 1) * itemsPerPage, total)} of {total}
+        <div className="flex justify-between items-center px-6 py-4 border-t">
+          <span className="text-sm text-gray-600">
+            {totalFiltered === 0
+              ? 'No results'
+              : `Showing ${pageIndex * pageSize + 1}–${Math.min((pageIndex + 1) * pageSize, totalFiltered)} of ${totalFiltered}`}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-sm font-medium">
+              Page {pageIndex + 1} of {table.getPageCount()}
             </span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage(Math.max(0, page - 1))}
-                disabled={page === 0}
-                className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setPage(page + 1)}
-                disabled={(page + 1) * itemsPerPage >= total}
-                className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

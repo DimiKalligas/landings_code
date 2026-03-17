@@ -86,10 +86,10 @@ export default async function AdminLayout({
         </nav>
 
         <div className="mt-auto pt-8 border-t border-slate-700">
-          <button className="w-full flex items-center gap-2 px-4 py-2 rounded hover:bg-slate-800 transition">
+          <div className="w-full flex items-center gap-2 px-4 py-2 rounded hover:bg-slate-800 transition">
             <LogOut className="w-4 h-4" />
             <SignOutButton label="Sign Out" />
-          </button>
+          </div>
         </div>
       </div>
 
