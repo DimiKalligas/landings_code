@@ -1,3 +1,4 @@
+// this works with data-table-client-SLIDE.tsx - showing a sheet sliding from the right
 "use client";
 
 // Fetches types via the server action whenever open becomes true and manufacturer changes
