@@ -37,7 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import { ExternalLink, Loader2, ChevronDown, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 // import { AircraftType } from "@/app/actions/types";
 import { typeColumns } from "./columns";
 import { AircraftType } from "@/app/actions/types";
@@ -189,6 +189,16 @@ export function TypeTableClient({ data }: TypeTableClientProps) {
           {table.getFilteredRowModel().rows.length} row(s)
         </p>
         <div className="flex items-center gap-2">
+          {/* << */}
+          <button
+            type="button"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
+            title="First page"
+          >
+            <ChevronsLeft className="w-4 h-4" />
+          </button>
           <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
             Previous
           </Button>
@@ -198,6 +208,15 @@ export function TypeTableClient({ data }: TypeTableClientProps) {
           <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Next
           </Button>
+          <button
+            type="button"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
+            title="Last page"
+          >
+            <ChevronsRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

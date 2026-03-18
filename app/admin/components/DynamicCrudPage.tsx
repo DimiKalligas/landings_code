@@ -5,6 +5,8 @@ import { getRecords, deleteRecord, createRecord, updateRecord } from '@/app/admi
 import {
   Plus, Trash2, Edit2, ChevronLeft, ChevronRight,
   Search, ChevronsUpDown, ChevronUp, ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
 } from 'lucide-react';
 import {
   useReactTable,
@@ -380,6 +382,17 @@ export default function DynamicCrudPage({
               : `Showing ${pageIndex * pageSize + 1}–${Math.min((pageIndex + 1) * pageSize, totalFiltered)} of ${totalFiltered}`}
           </span>
           <div className="flex items-center gap-2">
+            {/* << */}
+            <button
+              type="button"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+              className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
+              title="First page"
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </button>
+            {/* < */}
             <button
               type="button"
               onClick={() => table.previousPage()}
@@ -391,6 +404,7 @@ export default function DynamicCrudPage({
             <span className="text-sm font-medium">
               Page {pageIndex + 1} of {table.getPageCount()}
             </span>
+            {/* > */}
             <button
               type="button"
               onClick={() => table.nextPage()}
@@ -398,6 +412,16 @@ export default function DynamicCrudPage({
               className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
             >
               <ChevronRight className="w-4 h-4" />
+            </button>
+            {/* >> */}
+            <button
+              type="button"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+              className="p-2 border rounded hover:bg-gray-50 transition disabled:opacity-50"
+              title="Last page"
+            >
+              <ChevronsRight className="w-4 h-4" />
             </button>
           </div>
         </div>
